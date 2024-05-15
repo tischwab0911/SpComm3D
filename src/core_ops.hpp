@@ -9,6 +9,7 @@
 namespace SpKernels{
     void sddmm(denseMatrix& A, denseMatrix& B, cooMat& S, cooMat& C);
     void spmm(denseMatrix& X, cooMat& A, denseMatrix& Y);
+    // void spgemm(cooMat& A, cooMat& B, cooMat& C); // TODO
 }
 
 

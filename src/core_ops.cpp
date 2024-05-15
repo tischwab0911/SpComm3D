@@ -33,6 +33,14 @@ namespace SpKernels{
             }
         }
     }
+
+    /*
+    // TODO: Implement sparse matrix-matrix multiplication method(s)
+
+    void spgemm(cooMat& A, cooMat& B, cooMat& C){
+        // TODO
+    }
+     */
 }
 
 

@@ -785,3 +785,12 @@ void setup_spmm(
 
 }
 
+/*
+// TODO: implement comm setup for spgemm
+void setup_spgemm( cooMat& C, ... )
+{
+    // TODO
+}
+
+// TODO: Add Setup for 1D, 2D, (3D)
+*/

@@ -48,9 +48,9 @@ void process_args(int argc, char *argv[], std::vector<idx_t>& fvals, int& c, int
         int option_index = 0;
 
         /* Argument parameters:
-no_argument: " "
-required_argument: ":"
-optional_argument: "::" */
+            no_argument: " "
+            required_argument: ":"
+            optional_argument: "::" */
 
         choice = getopt_long( argc, argv, "vh:k:c:i:",
                 long_options, &option_index);
@@ -105,16 +105,23 @@ optional_argument: "::" */
 
 int main(int argc, char *argv[])
 {
+    // initialize the communicator
     MPI_Init(&argc, &argv);
     int rank, size;
     MPI_Comm comm = MPI_COMM_WORLD, xycomm, zcomm;
     MPI_Comm_rank(comm, &rank);
     MPI_Comm_size(comm, &size);
+
+    // declare oepration parameters
     string filename;
-    int c;
+    int c = 0;
+    int niter = 1;
     vector<idx_t> fvals;
-    int niter = 10;
+
+    // read in command line arguments
     process_args(argc, argv, fvals, c, niter, filename);
+
+    // get filename of matrix to multiply
     std::string::size_type const p(filename.find_last_of('.'));
     std::string mtxName = filename.substr(0, p);
     mtxName = mtxName.substr(mtxName.find_last_of("/\\") +1);
@@ -122,16 +129,26 @@ int main(int argc, char *argv[])
     std::array<int, 3> dims = {0,0,c};
     std::array<int,3> zeroArr ={0,0,0};
     std::array<int,3> tdims ={0,0,0};
+
+    // create 3D Cartesian Communicator, 0 indicates choice is left to MPI
     MPI_Dims_create(size, 3, dims.data());
     MPI_Comm cartcomm;
-    MPI_Cart_create(comm, 3, dims.data(), zeroArr.data(), 0, &cartcomm);   
+    MPI_Cart_create(comm, 3, dims.data(), zeroArr.data(), 0, &cartcomm);  
+
+    // get extend of Communicator 
     int X = dims[0], Y = dims[1], Z = dims[2];
+
+    // create subcommunicator for communication in xy-plane
     std::array<int, 3> remaindims = {true, true, false};
     MPI_Cart_sub(cartcomm, remaindims.data(), &xycomm); 
     int myxyrank;
     MPI_Comm_rank(xycomm, &myxyrank);  
+
+    // create subcoommunicator for communication in z direction
     remaindims = {false, false, true};
     MPI_Cart_sub(cartcomm, remaindims.data(), &zcomm); 
+
+    // local matrices
     cooMat Cloc, Sloc;
     Cloc.mtxName = mtxName;
     Sloc.mtxName = mtxName;
