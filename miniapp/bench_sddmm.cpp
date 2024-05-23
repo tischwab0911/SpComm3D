@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
                 dist_sddmm_spcomm3(Aloc, Bloc, Sloc, comm_expandA, comm_expandB, comm_reduce, Cloc, cartcomm);
             Sloc.ReMapIndices(mapAI, mapBI);
             Cloc.ReMapIndices(mapAI, mapBI);
-            //     print_numerical_sum(Cloc, zcomm, cartcomm);
+                // print_numerical_sum(Cloc, zcomm, cartcomm);
         }
         { /* sparse sddmm instance#2: no recv buffer*/  
             for(auto& elm : Cloc.vv) elm = 0.0;

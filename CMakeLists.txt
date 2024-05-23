@@ -32,4 +32,6 @@ add_executable(numCheckSeq "miniapp/numCheckSeq.cpp" ${SOURCES})
 
 add_executable(conv2bin "tools/read_convert_mm.cpp")
 
+add_executable(test_output "miniapp/test_output.cpp" ${SOURCES})
+
 
