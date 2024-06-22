@@ -30,7 +30,7 @@ void vals_from_str(string str, vector<idx_t>& vals){
     }
 }
 
-void process_args(int argc, char *argv[], std::vector<idx_t>& fvals, int& c, int& niter, string& filename){
+void process_args(int argc, char *argv[], std::vector<idx_t>& fvals, int& c,/*int& niter,*/ string& filename){
     int choice;
     while (1)
     {
