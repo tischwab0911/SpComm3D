@@ -1,3 +1,4 @@
 .direnv
 build
 .cache
+testing/matrices/*.mtx
