@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.1)
 ###############################################################################
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_COMPILER /usr/bin/g++) # default, change in subdir if necessary
+set(CMAKE_CXX_COMPILER mpic++) # default, change in subdir if necessary
 
 # to change build type (for checking optimization flags), do:
 # cmake -DCMAKE_BUILD_TYPE=Release (acc. to stackoverflow)
@@ -43,4 +43,4 @@ add_subdirectory(thirdparty)
 ## testing ####################################################################
 ###############################################################################
 
-# add_subdirectory(test)
+add_subdirectory(test)
