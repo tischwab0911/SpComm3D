@@ -13,6 +13,7 @@
 
 #include "basic.hpp"
 #include <algorithm>
+#include <array>
 
 using namespace std;
 namespace SpKernels {
@@ -217,6 +218,56 @@ void read_bin_parallel_distribute_coo(std::string filename, cooMat &Sloc,
    *             }
    *         }
    */
+}
+
+// stores the Matrix in mat in binary to the file with filename
+// this stores it in mathematical notation, where the indexes start from 1
+void write_parallel_coo_bin(const cooMat &mat, MPI_Comm glob_comm,
+                        const char *filename) {
+  int rank, size;
+  MPI_Comm_rank(glob_comm, &rank);
+  MPI_Comm_size(glob_comm, &size);
+
+  unsigned n_triplets = mat.nnz;
+  unsigned offset;
+  MPI_Scan(&n_triplets, &offset, 1, MPI_UNSIGNED, MPI_SUM, glob_comm);
+  offset -= n_triplets; // start at the beginning of your section, note that this is in triplet size
+
+  std::vector<triplet> my_data;
+
+  for (size_t i = 0; i < n_triplets; i++) {
+    // add 1 for mathematical notation
+    my_data.push_back(triplet{mat.ltgR[mat.ii[i]] + 1, mat.ltgC[mat.jj[i]] + 1, mat.vv[i]});
+  }
+
+  MPI_File file;
+  MPI_File_open(MPI_COMM_WORLD, filename, MPI_MODE_CREATE | MPI_MODE_WRONLY,
+  MPI_INFO_NULL, &file);
+
+  if (rank == 0) {
+    // store information about size and nnz in file
+    // change sizes properly
+    MPI_File_write_at(file, 0, &mat.gnrows, 1, MPI_IDX_T, MPI_STATUS_IGNORE);
+    MPI_File_write_at(file, sizeof(unsigned int), &mat.gncols, 1, MPI_IDX_T, MPI_STATUS_IGNORE);
+    MPI_File_write_at(file, 2*sizeof(unsigned int), &mat.gnnz, 1, MPI_IDX_LARGE_T, MPI_STATUS_IGNORE);
+  }
+  // add first three values to offset and scale it properly
+  // create new triplet datatype, copied from read
+  MPI_Datatype types[3] = {MPI_IDX_T, MPI_IDX_T, MPI_REAL_T};
+  MPI_Datatype mpi_s_type;
+  MPI_Aint offsets[3];
+
+  offsets[0] = offsetof(triplet, row);
+  offsets[1] = offsetof(triplet, col);
+  offsets[2] = offsetof(triplet, val);
+  int blocklengths[3] = {1, 1, 1};
+  const int nitems = 3;
+  MPI_Type_create_struct(nitems, blocklengths, offsets, types, &mpi_s_type);
+  MPI_Type_commit(&mpi_s_type);
+
+  offset = sizeof(triplet) * offset + 2 * sizeof(unsigned int) + sizeof(long unsigned int);
+  MPI_File_write_at(file, offset, my_data.data(), n_triplets, mpi_s_type, MPI_STATUS_IGNORE);
+
 }
 } // namespace SpKernels
 

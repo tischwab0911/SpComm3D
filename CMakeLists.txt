@@ -34,4 +34,8 @@ add_executable(conv2bin "tools/read_convert_mm.cpp")
 
 add_executable(test_output "miniapp/test_output.cpp" ${SOURCES})
 
+add_executable(test "miniapp/test.cpp" ${SOURCES})
+
+add_executable(conv2mtx "tools/convert_bin_to_mtx.cpp" ${SOURCES})
+
 
