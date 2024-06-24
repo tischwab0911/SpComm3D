@@ -137,9 +137,11 @@ int main(int argc, char *argv[])
     std::array<int, 3> dims = {0,0,c};
     std::array<int,3> zeroArr ={0,0,0};
     std::array<int,3> tdims ={0,0,0};
+
     MPI_Dims_create(size, 3, dims.data());
     MPI_Comm cartcomm;
     MPI_Cart_create(comm, 3, dims.data(), zeroArr.data(), 0, &cartcomm);   
+
     int X = dims[0], Y = dims[1], Z = dims[2];
     std::array<int, 3> remaindims = {true, true, false};
     MPI_Cart_sub(cartcomm, remaindims.data(), &xycomm); 
@@ -171,6 +173,7 @@ int main(int argc, char *argv[])
             if(myzcoord < f% Z) ++floc;
         }
         { /* distribute A,B and respect communication, setup sparse comm*/
+            std::cout << "reached\n";
             SparseComm<real_t> comm_expand, comm_reduce;
             denseMatrix Yloc, Xloc;
             /* prepare Yloc, Xloc according to local dims of Cloc */
@@ -184,7 +187,7 @@ int main(int argc, char *argv[])
 
             for(int i = 0; i < NUM_ITER; ++i)
                 dist_spmm_spcomm(Xloc, Sloc, Yloc, comm_expand, comm_reduce, cartcomm);
-            //       print_numerical_sum(Cloc, zcomm, cartcomm);
+                print_numerical_sum(Sloc, zcomm, cartcomm);
         }
         /* instance #2: dense */
         {

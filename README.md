@@ -17,6 +17,13 @@ make conv2bin
 make benchSddmm  
 ```
 
+### run benchSpMM:
+- load a matrix in mtx format (for example from here: http://sparse.tamu.edu/)
+- convert it to binary, e.g. ./build/convert2bin data/1138_bus.mtx
+- run bunchSpMM with the option -c c_value,
+  where c_value should be between 0 and n_processes and should divide n_processes (z_dimension, 0 is valid, then mpi chooses a good value by itself)
+      example: mpirun -n 8 ./build/benchSpMM -c 4 data/1138_bus.bin 
+
 
 ### Authors  
 Nabil Abubaker, Torsten Hoefler

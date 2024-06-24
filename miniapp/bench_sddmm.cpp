@@ -30,7 +30,7 @@ void vals_from_str(string str, vector<idx_t>& vals){
     }
 }
 
-void process_args(int argc, char *argv[], std::vector<idx_t>& fvals, int& c, int& niter, string& filename){
+void process_args(int argc, char *argv[], std::vector<idx_t>& fvals, int& c,/*int& niter,*/ string& filename){
     int choice;
     while (1)
     {
@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
                 dist_sddmm_spcomm3(Aloc, Bloc, Sloc, comm_expandA, comm_expandB, comm_reduce, Cloc, cartcomm);
             Sloc.ReMapIndices(mapAI, mapBI);
             Cloc.ReMapIndices(mapAI, mapBI);
-            //     print_numerical_sum(Cloc, zcomm, cartcomm);
+                // print_numerical_sum(Cloc, zcomm, cartcomm);
         }
         { /* sparse sddmm instance#2: no recv buffer*/  
             for(auto& elm : Cloc.vv) elm = 0.0;
